@@ -2,6 +2,10 @@
 using POS_Backend.DTOs;
 using POS_Backend.Models;
 
+using Microsoft.AspNetCore.SignalR;
+using POS_Backend.Hubs;
+using System.Threading.Tasks;
+
 namespace POS_Backend.Services
 {
     public class OrderService
@@ -9,13 +13,16 @@ namespace POS_Backend.Services
         private const string CACHE_KEY = "ORDERS";
         private readonly IMemoryCache _cache;
         private readonly ProductService _productService;
+        private readonly IHubContext<OrderHub> _hubContext;
 
         public OrderService(
             IMemoryCache cache,
-            ProductService productService)
+            ProductService productService,
+            IHubContext<OrderHub> hubContext)
         {
             _cache = cache;
             _productService = productService;
+            _hubContext = hubContext;
         }
 
         public List<Order> GetOrders()
@@ -36,7 +43,7 @@ namespace POS_Backend.Services
             return (items, total);
         }
 
-        public Order CreateOrder(CreateOrderRequest request)
+        public async Task<Order> CreateOrder(CreateOrderRequest request)
         {
             if (request.Items == null || !request.Items.Any())
                 throw new ArgumentException("Order must contain at least one item.");
@@ -64,6 +71,8 @@ namespace POS_Backend.Services
             var orders = GetOrders();
             orders.Add(order);
             _cache.Set(CACHE_KEY, orders);
+
+            await _hubContext.Clients.All.SendAsync("OrderCreated", order); //hub realtime
 
             return order;
         }

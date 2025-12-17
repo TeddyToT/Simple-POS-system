@@ -17,11 +17,11 @@ namespace POS_Backend.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateOrder([FromBody] CreateOrderRequest request)
+        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest request)
         {
             try
             {
-                var order = _orderService.CreateOrder(request);
+                var order = await _orderService.CreateOrder(request);
                 var response = new ApiResponse<Order>
                 {
                     Success = true,
