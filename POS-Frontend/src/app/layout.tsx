@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 // App
 import { Toaster } from '@/components/ui/sonner'
 
-// Internal
 const queryClient = new QueryClient();
 const App = () => {
   return (
