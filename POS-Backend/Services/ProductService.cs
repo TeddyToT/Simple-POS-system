@@ -32,9 +32,6 @@ namespace POS_Backend.Services
 
         public (List<Product> Items, int Total) GetProducts(int pageIndex, int limit)
         {
-            pageIndex = Math.Max(1, pageIndex);
-            limit = Math.Max(1, limit);
-
             var total = _products.Count;
 
             var items = _products

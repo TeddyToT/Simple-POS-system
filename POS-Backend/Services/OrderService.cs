@@ -25,8 +25,6 @@ namespace POS_Backend.Services
 
         public (List<Order> Items, int Total) GetOrdersPaged(int pageIndex, int limit)
         {
-            pageIndex = Math.Max(pageIndex, 1);
-            limit = Math.Max(limit, 1);
             var orders = _cache.GetOrCreate(CACHE_KEY, _ => new List<Order>())!;
             var total = orders.Count;
 

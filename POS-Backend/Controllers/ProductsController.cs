@@ -2,12 +2,13 @@
 using POS_Backend.Models;
 using POS_Backend.Services;
 using POS_Backend.Common;
+using POS_Backend.DTOs;
 
 namespace POS_Backend.Controllers
 {
     [ApiController]
     [Route("api/products")]
-    public class ProductsController : Controller
+    public class ProductsController : ControllerBase
     {
         private readonly ProductService _productService;
 
@@ -17,11 +18,10 @@ namespace POS_Backend.Controllers
         }
         [HttpGet]
         public IActionResult GetProducts(
-            [FromQuery] int page = 1,
-            [FromQuery] int limit = 10)
+            [FromQuery] PagingRequest request)
         {
-            var (items, total) = _productService.GetProducts(page, limit);
-            var totalPages = (int)Math.Ceiling(total / (double)limit);
+            var (items, total) = _productService.GetProducts(request.Page, request.Limit);
+            var totalPages = (int)Math.Ceiling(total / (double)request.Limit);
 
             var response = new ApiResponse<List<Product>>
             {
@@ -29,8 +29,8 @@ namespace POS_Backend.Controllers
                 Message = "Products retrieved successfully",
                 Data = items,
                 Total = total,
-                Page = page,
-                Limit = limit,
+                Page = request.Page,
+                Limit = request.Limit,
                 TotalPages = totalPages
             };
 
