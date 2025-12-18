@@ -1,0 +1,28 @@
+services:
+  backend:
+    build:
+      context: ./POS_Backend
+      dockerfile: Dockerfile
+    container_name: pos_backend
+    ports:
+      - "7089:7089"
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7089/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  frontend:
+    build:
+      context: ./POS_Frontend
+      dockerfile: Dockerfile
+    container_name: pos_frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_BACKEND_DOMAIN=http://backend:7089
+    depends_on:
+      backend:
+        condition: service_healthy
