@@ -27,7 +27,8 @@ namespace POS_Backend.Services
 
         public List<Order> GetOrders()
         {
-            return _cache.GetOrCreate(CACHE_KEY, _ => new List<Order>())!;
+            var orders = _cache.GetOrCreate(CACHE_KEY, _ => new List<Order>())!;
+            return orders.OrderByDescending(o => o.CreatedAt).ToList();
         }
 
         public (List<Order> Items, int Total) GetOrdersPaged(int pageIndex, int limit)
@@ -36,6 +37,7 @@ namespace POS_Backend.Services
             var total = orders.Count;
 
             var items = orders
+                .OrderByDescending(o => o.CreatedAt)
                 .Skip((pageIndex - 1) * limit)
                 .Take(limit)
                 .ToList();
