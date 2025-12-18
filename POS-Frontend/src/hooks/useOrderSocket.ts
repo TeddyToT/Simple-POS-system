@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useQueryClient, type InfiniteData } from '@tanstack/react-query'
 
 // App
-import { onOrderCreated, offOrderCreated } from '@/configs/socket-client'
+import { getSocket } from '@/configs/socket-client'
 import type { Order } from '@/api/types/order'
 import type { PaginatedResponse } from '@/api/types/base'
 
@@ -16,6 +16,9 @@ export const useOrderSocket = (): void => {
   const queryClient = useQueryClient()
 
   useEffect(() => {
+
+    const client = getSocket()
+
     const handleOrderCreated = (order: Order) => {
       queryClient.setQueryData<OrdersInfiniteData>(
         ['orders'],
@@ -41,10 +44,10 @@ export const useOrderSocket = (): void => {
       )
     }
 
-    onOrderCreated(handleOrderCreated)
+    client.on('OrderCreated', handleOrderCreated)
 
     return () => {
-      offOrderCreated()
+      client.off('OrderCreated', handleOrderCreated)
     }
   }, [queryClient])
 }

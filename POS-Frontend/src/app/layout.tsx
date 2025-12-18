@@ -5,9 +5,22 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 // App
 import { Toaster } from '@/components/ui/sonner'
 import { Circle, CircleAlert, CircleCheck, CircleX } from 'lucide-react';
+import { connectSocket, disconnectSocket } from '@/configs/socket-client'
+import { useEffect } from 'react';
 
 const queryClient = new QueryClient();
 const App = () => {
+
+   useEffect(() => {
+    connectSocket()
+
+    const handleBeforeUnload = () => disconnectSocket()
+    window.addEventListener('beforeunload', handleBeforeUnload)
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [])
   return (
     <QueryClientProvider client={queryClient}>
       <div className='min-h-dvh w-screen max-w-full'>

@@ -6,70 +6,41 @@ import {
 } from '@microsoft/signalr'
 
 import baseConfig from './base'
-import type { Order } from '@/api/types/order'
+// import type { Order } from '@/api/types/order'
 
 // SignalR socket client (Orders)
+let socketClient: HubConnection | null = null
+export const getSocket = () => {
+  if (!socketClient) {
+    socketClient = new HubConnectionBuilder()
+      .withUrl(`${baseConfig.socketDomain}/hubs/orders`, { withCredentials: true })
+      .withAutomaticReconnect([0, 2000, 5000, 10000])
+      .configureLogging(LogLevel.Information)
+      .build()
 
-const socketClient: HubConnection = new HubConnectionBuilder()
-  .withUrl(`${baseConfig.socketDomain}/hubs/orders`, {
-    withCredentials: true
-    // authentication later
-  })
-  .withAutomaticReconnect([0, 2000, 5000, 10000])
-  .configureLogging(LogLevel.Information)
-  .build()
-
-// Connection lifecycle
-
-socketClient.onreconnecting((error) => {
-  console.warn('[Order socket] Reconnecting...', { error })
-})
-
-socketClient.onreconnected((connectionId) => {
-  console.log('[Order socket] Reconnected', { connectionId })
-})
-
-socketClient.onclose((error) => {
-  console.log('[Order socket] Disconnected', { error })
-})
-
-// Connect / Disconnect
+    socketClient.onreconnecting((err) => console.warn('[Order socket] Reconnecting', err))
+    socketClient.onreconnected((id) => console.log('[Order socket] Reconnected', id))
+    socketClient.onclose((err) => console.log('[Order socket] Disconnected', err))
+  }
+  return socketClient
+}
 
 export const connectSocket = async () => {
-  if (socketClient.state === HubConnectionState.Connected) return
+  const client = getSocket()
+  if (client.state === HubConnectionState.Connected) return
 
   try {
-    await socketClient.start()
-    console.log('[Order socket] Connected', {
-      state: socketClient.state,
-      connectionId: socketClient.connectionId
-    })
+    await client.start()
+    console.log('[Order socket] Connected', client.connectionId)
   } catch (err) {
     console.error('[Order socket] Connect error', err)
   }
 }
 
 export const disconnectSocket = async () => {
-  if (socketClient.state !== HubConnectionState.Disconnected) {
-    await socketClient.stop()
+  const client = getSocket()
+  if (client.state !== HubConnectionState.Disconnected) {
+    await client.stop()
     console.log('[Order socket] Disconnected manually')
   }
 }
-
-// Events
-
-export const onOrderCreated = (callback: (order: Order) => void) => {
-  socketClient.on('OrderCreated', (order: Order) => {
-    console.log('[Order socket] OrderCreated', order)
-    callback(order)
-  })
-}
-
-export const offOrderCreated = () => {
-  socketClient.off('OrderCreated')
-}
-
-// Export
-
-export { socketClient }
-export default socketClient

@@ -1,4 +1,4 @@
-const backendDomain = import.meta.env.VITE_BACKEND_DOMAIN as string || 'https://localhost:7089/api' //Development
+const backendDomain = import.meta.env.VITE_BACKEND_DOMAIN as string || 'https://localhost:7089' //Development
 
 if (!backendDomain) {
   throw new Error('VITE_BACKEND_DOMAIN is not defined')
@@ -11,7 +11,7 @@ const socketDomain = backendDomain
 const baseConfig = {
   backendDomain,
   socketDomain,
-  apiEndpoint: backendDomain
+  apiEndpoint: backendDomain + '/api'
 }
 
 export default baseConfig
