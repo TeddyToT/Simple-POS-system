@@ -1,12 +1,11 @@
+import OrderTable from './components/order-table'
 
-const Order = () => {
-
+const OrderPage = () => {
   return (
-      <div className=''>
-        Order Page
-      </div>
-
+    <div className="p-6">
+      <OrderTable />
+    </div>
   )
 }
 
-export default Order
+export default OrderPage

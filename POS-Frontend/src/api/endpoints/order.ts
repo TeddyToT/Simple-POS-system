@@ -29,6 +29,9 @@ export const useInfiniteOrders = () =>
       const { page, totalPages } = lastPage
       return page < totalPages ? page + 1 : undefined
     },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   })
 
 
