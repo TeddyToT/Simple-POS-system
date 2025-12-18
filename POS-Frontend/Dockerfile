@@ -1,28 +1,19 @@
-# --- Build Stage ---
-FROM node:20-alpine AS builder
+# Build stage
+FROM node:20 AS builder
 WORKDIR /app
 
-# Install dependencies
+ARG VITE_BACKEND_DOMAIN
+ENV VITE_BACKEND_DOMAIN=$VITE_BACKEND_DOMAIN
+
 COPY package*.json ./
 RUN npm install
 
-
-# Copy source
 COPY . .
-
-# Build project
 RUN npm run build
 
-# --- Production Stage ---
-FROM node:20-alpine AS runner
-WORKDIR /app
+# Runtime stage
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Install serve
-RUN npm install -g serve
-
-# Copy build files
-COPY --from=builder /app/dist ./dist
-
-# Serve production build
-EXPOSE 5173
-CMD ["serve", "-s", "dist", "-l", "5173"]
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

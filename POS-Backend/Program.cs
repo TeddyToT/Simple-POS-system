@@ -18,7 +18,7 @@ builder.Services.AddCors(options =>
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials(); 
+            .AllowCredentials();
     });
 });
 
@@ -29,7 +29,6 @@ builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<ProductService>();
 builder.Services.AddScoped<OrderService>();
 
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -38,7 +37,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseCors("AllowFrontend");
 
