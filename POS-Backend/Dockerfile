@@ -1,24 +1,23 @@
-# Stage 1: Build
+#Build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
-# Copy csproj and restore dependencies
-COPY *.sln .
-COPY POS_Backend/*.csproj ./POS_Backend/
+# Copy csproj & restore
+COPY *.csproj ./
 RUN dotnet restore
 
-# Copy all source code and publish
-COPY POS_Backend/. ./POS_Backend/
-WORKDIR /app/POS_Backend
+# Copy source
+COPY . ./
 RUN dotnet publish -c Release -o out
 
-# Stage 2: Runtime
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+#Runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=build /app/POS_Backend/out ./
 
-# Expose port
+# Listen port 7089
+ENV ASPNETCORE_URLS=http://+:7089
+
+COPY --from=build /app/out ./
+
 EXPOSE 7089
-
-# Entrypoint
 ENTRYPOINT ["dotnet", "POS_Backend.dll"]
