@@ -1,4 +1,4 @@
-const backendDomain = import.meta.env.VITE_BACKEND_DOMAIN as string || 'https://localhost:7089' //Development
+const backendDomain = import.meta.env.VITE_BACKEND_DOMAIN as string || 'https://localhost:7089/api' //Development
 
 if (!backendDomain) {
   throw new Error('VITE_BACKEND_DOMAIN is not defined')

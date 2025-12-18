@@ -17,7 +17,7 @@ const Main = () => {
     }
   }, [])
   return(
-  <div className='min-h-dvh w-screen max-w-full bg-muted'>
+  <div className='min-h-dvh w-screen max-w-full bg-background'>
     <Header />
     <main className="mx-auto h-full w-full max-w-384">
         <MainTabs />
