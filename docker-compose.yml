@@ -1,7 +1,7 @@
 services:
   backend:
     build:
-      context: ./POS_Backend
+      context: ./POS-Backend
       dockerfile: Dockerfile
     container_name: pos_backend
     ports:
@@ -16,7 +16,7 @@ services:
 
   frontend:
     build:
-      context: ./POS_Frontend
+      context: ./POS-Frontend
       dockerfile: Dockerfile
     container_name: pos_frontend
     ports:
